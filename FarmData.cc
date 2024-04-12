@@ -1,67 +1,78 @@
 #include "FarmData.h"
 
 //ctr
-FarmData::FarmData() {
-    ifstream file("farmdata/farmdata.txt");
-    if (!file) {
-        cerr << "Error opening farm data file." << endl;
-        return;
-    }
-    string line;
-    while (getline(file, line)) {
-        stringstream ss(line);
-        string region, animalName;
-        int numFarms, numAnimals;
-        getline(ss, region, '\t');
-        getline(ss, animalName, '\t');
-        if (!(ss >> numFarms >> numAnimals)) {
-            cerr << "Error parsing line: " << line << endl;
-            continue; // skips malformed lines
-        }
-        allData.emplace_back(make_tuple(region, animalName, numFarms, numAnimals));
-        cout << "Read: " << region << ", " << animalName << ", " << numFarms << ", " << numAnimals << endl;
-    }
-}
+FarmData::FarmData() {}
 
 //dtr
 FarmData::~FarmData() {}
 
 // methods
-void FarmData::setProvince(const string& province) {
+void FarmData::loadData(const std::string& filename) {
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        std::string year, region, animalName, farmsStr, animalsStr;
+        int numFarms, numAnimals;
+
+        std::getline(ss, year, '\t');
+        std::getline(ss, region, '\t');
+        std::getline(ss, animalName, '\t');
+        std::getline(ss, farmsStr, '\t');
+        std::getline(ss, animalsStr);
+
+        numFarms = std::stoi(farmsStr);
+        numAnimals = std::stoi(animalsStr);
+
+        allData.emplace_back(year, region, animalName, numFarms, numAnimals);
+    }
+}
+
+void FarmData::setProvince(const std::string& province) {
     currentData.clear();
-    copy_if(allData.begin(), allData.end(), back_inserter(currentData),[&province](const auto& record) {
-                return get<0>(record) == province;
-            });
+    std::copy_if(allData.begin(), allData.end(), std::back_inserter(currentData),
+                 [&province](const Record& rec) {
+                     return rec.region == province;
+                 });
 }
 
 void FarmData::sortByAnimalName() {
-    sort(currentData.begin(), currentData.end(), [](const auto& a, const auto& b) {
-        return get<1>(a) < get<1>(b);
-    });
+    std::sort(currentData.begin(), currentData.end(),
+              [](const Record& a, const Record& b) {
+                  return a.animalName < b.animalName;
+              });
 }
 
 void FarmData::sortByNumberOfFarms() {
-    sort(currentData.begin(), currentData.end(), [](const auto& a, const auto& b) {
-        return get<2>(a) > get<2>(b);
-    });
+    std::sort(currentData.begin(), currentData.end(),
+              [](const Record& a, const Record& b) {
+                  return a.numFarms > b.numFarms;
+              });
 }
 
 void FarmData::sortByNumberOfAnimals() {
-    sort(currentData.begin(), currentData.end(), [](const auto& a, const auto& b) {
-        return get<3>(a) > get<3>(b);
-    });
+    std::sort(currentData.begin(), currentData.end(),
+              [](const Record& a, const Record& b) {
+                  return a.numAnimals > b.numAnimals;
+              });
 }
 
 void FarmData::printAllData() {
-    for (const auto& record : allData) {
-        cout << get<0>(record) << "\t" << get<1>(record) << "\t"
-             << get<2>(record) << "\t" << get<3>(record) << endl;
+    for (const auto& rec : allData) {
+        std::cout << rec.year << "\t" << rec.region << "\t"
+                  << rec.animalName << "\t" << rec.numFarms << "\t" << rec.numAnimals << std::endl;
     }
 }
 
 void FarmData::printCurrentData() {
-    for (const auto& record : currentData) {
-        cout << get<0>(record) << "\t" << get<1>(record) << "\t"
-             << get<2>(record) << "\t" << get<3>(record) << endl;
+    for (const auto& rec : currentData) {
+        std::cout << rec.year << "\t" << rec.region << "\t"
+                  << rec.animalName << "\t" << rec.numFarms << "\t" << rec.numAnimals << std::endl;
     }
 }
