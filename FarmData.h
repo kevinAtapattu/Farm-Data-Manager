@@ -29,7 +29,8 @@ class FarmData
         void printCurrentData();
 
     private:
-
+        vector<tuple<string, string, int, int>> allData;
+        vector<tuple<string, string, int, int>> currentData;
 };
 
 #endif
