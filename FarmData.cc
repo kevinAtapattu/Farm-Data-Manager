@@ -5,11 +5,13 @@ FarmData::FarmData() {
     ifstream file("farmdata/farmdata.txt");
     if (!file) {
         cerr << "Error opening farm data file." << endl;
-        return;  // Exit if file not opened successfully
+        // exit if file not opened successfully
+        return;  
     }
     string line;
     while (getline(file, line)) {
-        if (line.empty()) continue;  // Skip any empty lines
+        // skip empty lines
+        if (line.empty()) continue;  
 
         istringstream ss(line);
         string year, region, animalName;
@@ -20,10 +22,11 @@ FarmData::FarmData() {
         getline(ss, animalName, '\t');
         ss >> numFarms >> numAnimals;
 
-        // Check for reading errors or corrupted data
+        // checking for reading errors
         if (ss.fail()) {
             cerr << "Failed to parse line: " << line << endl;
-            continue;  // Skip corrupted lines
+            // skipping corrupted lines
+            continue;  
         }
 
         allData.emplace_back(year, region, animalName, numFarms, numAnimals);
@@ -96,7 +99,7 @@ void FarmData::sortByNumberOfAnimals() {
 }
 
 void FarmData::printAllData() {
-    std::cout << "Attempting to print data..." << std::endl;
+    std::cout << "Attempting to print data..." << std::endl; // to debug
     for (const auto& rec : allData) {
         std::cout << rec.year << "\t" << rec.region << "\t"
                   << rec.animalName << "\t" << rec.numFarms << "\t" << rec.numAnimals << std::endl;
@@ -104,7 +107,7 @@ void FarmData::printAllData() {
 }
 
 void FarmData::printCurrentData() {
-    std::cout << "Attempting to print data..." << std::endl;
+    std::cout << "Attempting to print data..." << std::endl; // to debug
     for (const auto& rec : currentData) {
         std::cout << rec.year << "\t" << rec.region << "\t"
                   << rec.animalName << "\t" << rec.numFarms << "\t" << rec.numAnimals << std::endl;
