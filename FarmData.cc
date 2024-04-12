@@ -14,8 +14,12 @@ FarmData::FarmData() {
         int numFarms, numAnimals;
         getline(ss, region, '\t');
         getline(ss, animalName, '\t');
-        ss >> numFarms >> numAnimals;
+        if (!(ss >> numFarms >> numAnimals)) {
+            cerr << "Error parsing line: " << line << endl;
+            continue; // skips malformed lines
+        }
         allData.emplace_back(make_tuple(region, animalName, numFarms, numAnimals));
+        cout << "Read: " << region << ", " << animalName << ", " << numFarms << ", " << numAnimals << endl;
     }
 }
 
